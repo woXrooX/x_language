@@ -125,9 +125,3 @@ method_declaration = type, identifier, "(", [ parameter_list ], ")", block ;
 print_statement = "print", "(", (string_literal | formatted_string_literal | expression), ")", newline ;
 
 
-
-(* Line Continuation Rules *)
-
-line_continuation_context = ? any newline appearing inside unclosed parentheses, brackets, or braces ? ;
-
-operator_continuation = ? any newline appearing after +, -, *, /, ==, !=, <, >, <=, >= or other binary operators ? ;
