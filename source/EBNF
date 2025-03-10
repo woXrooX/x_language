@@ -1,4 +1,4 @@
-(* Charatcters *)
+(* Characters *)
 
 uppercase_letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" ;
 
@@ -7,6 +7,28 @@ lowercase_letter = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "
 letter = uppercase_letter | lowercase_letter ;
 
 digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+
+
+(* Whitespace and Line Terminators *)
+
+(* ASCII 32, the space character *)
+space = " " ;
+
+(* ASCII 9, the horizontal tab character *)
+tab = "\t" ;
+
+(* ASCII 10, the line feed character *)
+line_feed = "\n" ;
+
+(* ASCII 13, the carriage return character *)
+carriage_return = "\r" ;
+
+(* Characters considered whitespace but not line terminators *)
+whitespace = space | tab ;
+
+(* Line terminators *)
+newline = line_feed | carriage_return | (carriage_return, line_feed) ;
 
 
 
@@ -42,11 +64,11 @@ program = { declaration } ;
 
 declaration = typedef_declaration | function_declaration | class_declaration ;
 
-typedef_declaration = "typedef", type, identifier, ";" ;
+typedef_declaration = "typedef", type, identifier, newline ;
 
-variable_declaration = type, identifier, [ "=", expression ], ";" ;
+variable_declaration = type, identifier, [ "=", expression ], newline ;
 
-function_declaration = type, identifier, "(", [ parameter_list ], ")", block, ";" ;
+function_declaration = type, identifier, "(", [ parameter_list ], ")", block ;
 
 parameter_list = parameter, { ",", parameter } ;
 
@@ -54,23 +76,23 @@ parameter = type, identifier ;
 
 statement = simple_statement | compound_statement ;
 
-simple_statement = variable_declaration | assignment_statement | function_call_statement | return_statement | ";" ;
+simple_statement = variable_declaration | assignment_statement | function_call_statement | return_statement | print_statement | newline ;
 
 compound_statement = if_statement | while_statement | for_statement | block ;
 
 block = "{", { statement }, "}" ;
 
-assignment_statement = expression, "=", expression, ";" ;
+assignment_statement = expression, "=", expression, newline ;
 
-function_call_statement = function_call, ";" ;
+function_call_statement = function_call, newline ;
 
-return_statement = "return", [ expression ], ";" ;
+return_statement = "return", [ expression ], newline ;
 
 if_statement = "if", "(", expression, ")", statement, [ "else", statement ] ;
 
 while_statement = "while", "(", expression, ")", statement ;
 
-for_statement = "for", "(", simple_statement, expression, ";", expression, ")", statement ;
+for_statement = "for", "(", simple_statement, expression, newline, expression, ")", statement ;
 
 expression = equality_expression ;
 
@@ -94,11 +116,18 @@ function_call_args = "(", [ argument_list ], ")" ;
 
 argument_list = expression, { ",", expression } ;
 
-class_declaration = "class", identifier, "{", { class_member }, "}", ";" ;
+class_declaration = "class", identifier, "{", { class_member }, "}" ;
 
 class_member = variable_declaration | method_declaration ;
 
-method_declaration = type, identifier, "(", [ parameter_list ], ")", block, ";" ;
+method_declaration = type, identifier, "(", [ parameter_list ], ")", block ;
 
-print_statement = "print", "(", (string_literal | formatted_string_literal), ")", ";" ;
+print_statement = "print", "(", (string_literal | formatted_string_literal | expression), ")", newline ;
 
+
+
+(* Line Continuation Rules *)
+
+line_continuation_context = ? any newline appearing inside unclosed parentheses, brackets, or braces ? ;
+
+operator_continuation = ? any newline appearing after +, -, *, /, ==, !=, <, >, <=, >= or other binary operators ? ;
